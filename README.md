@@ -4,8 +4,34 @@ BIST hisseleri, TEFAS fonları, gram altın ve nakitten oluşan portföyünü **
 kendi bilgisayarında** izleyen masaüstü uygulaması. Günlük değerleme, gerekçeli
 analiz, olay-temelli uyarılar ve Midas hesap ekstresinden otomatik mutabakat.
 
+> **Bu uygulama kişisel kullanım için yazıldı.** Kendi portföyümü takip etmek
+> için yaptım, sonra işe yarayabileceğini düşünüp herkese açtım. Ticari bir ürün
+> değil; destek taahhüdü, yol haritası veya garanti yok. Olduğu gibi kullan,
+> istediğin gibi değiştir (MIT lisansı).
+
 > Yatırım tavsiyesi aracı değildir. Üretilen yorumlar bilgilendirme amaçlıdır;
 > uygulama emir vermez, alım-satım yapmaz.
+
+## Sende çalışır mı?
+
+**Çalışır** — portföy verisi depoya girmiyor, ilk açılışta boş bir örnekten
+başlıyorsun ve kendi varlıklarını uygulama içinden giriyorsun.
+
+Dürüst olmak gerekirse bilmen gerekenler:
+
+- **Arayüz ve raporlar Türkçe.** Yerelleştirme yok.
+- **Windows'ta geliştirildi ve test edildi.** Sistem tepsisi ve pencere modu
+  pywebview/pystray üzerinden çalışıyor; macOS/Linux'ta denenmedi.
+- **Ekstre mutabakatı Midas'a özeldir.** Ayrıştırıcı Midas'ın PDF ekstresinin
+  sütun düzenine göre yazıldı; başka aracı kurumun ekstresini okumaz. Midas
+  biçimi değiştirirse ayrıştırıcı sessizce yanlış sonuç vermez, **hata fırlatır**.
+- **Ekstre senkronu ve yapay zekâ asistanı opsiyoneldir**, ikisi de kapalı gelir.
+  Asistan için kendi Anthropic API anahtarını girmen gerekir (ücretli).
+- Fiyat kaynakları halka açık uçlar; kurumlar bunları değiştirirse güncelleme
+  gerekebilir.
+
+Midas kullanmıyorsan uygulama yine çalışır — sadece ekstre senkronundan
+faydalanamazsın, portföyünü elle girersin.
 
 ## Güvenlik ilkeleri
 
@@ -91,3 +117,8 @@ yfinance · PyMuPDF · anthropic
 
 Mimari, veri sözleşmeleri ve geliştirirken dikkat edilmesi gereken tuzaklar için:
 **[ARCHITECTURE.md](ARCHITECTURE.md)**
+
+## Lisans
+
+[MIT](LICENSE) — kullan, değiştir, dağıt. Garanti verilmez; finansal kararların
+sorumluluğu sana aittir.
