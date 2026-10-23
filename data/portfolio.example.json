@@ -1,0 +1,34 @@
+{
+  "currency": "TRY",
+  "realized_pnl_try": 0,
+  "holdings": [
+    {
+      "type": "fund",
+      "code": "AFA",
+      "name": "Örnek Hisse Senedi Fonu",
+      "units": 100,
+      "cost_try": 1000.0
+    },
+    {
+      "type": "stock",
+      "code": "THYAO",
+      "name": "Türk Hava Yolları A.O.",
+      "units": 10,
+      "cost_try": 3000.0
+    },
+    {
+      "type": "gold",
+      "code": "ALTIN",
+      "name": "Altın",
+      "grams": 1.0,
+      "cost_try": 6000.0
+    },
+    {
+      "type": "cash",
+      "code": "NAKIT",
+      "name": "TL",
+      "amount_try": 500.0,
+      "cost_try": 500.0
+    }
+  ]
+}

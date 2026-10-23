@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portföy Danışman</title>
+  <meta name="description" content="BIST hisseleri, TEFAS fonları ve gram altından oluşan portföyün için günlük değerleme, gerekçeli analiz ve rapor. Tamamen yerel çalışır." />
+  <meta name="theme-color" content="#071319" />
+  <meta name="color-scheme" content="dark" />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <a class="skip-link" href="#app">İçeriğe geç</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none">
+          <defs>
+            <linearGradient id="logoArea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="currentColor" stop-opacity=".3"/>
+              <stop offset="1" stop-color="currentColor" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M3.5 17 L8 13 L11.5 14.5 L16 9 L20.5 6 L20.5 20.5 L3.5 20.5 Z" fill="url(#logoArea)"/>
+          <path d="M3.5 17 L8 13 L11.5 14.5 L16 9 L20.5 6" stroke="currentColor" stroke-width="1.9"
+            stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="20.5" cy="6" r="1.7" fill="#eefbf4"/>
+        </svg>
+      </span>
+      <div>
+        <h1>Portföy Danışman</h1>
+        <p class="sub">BIST · Fon · Altın</p>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <span id="updated" class="updated">—</span>
+      <button id="syncNowBtn" class="btn ghost" title="Gmail'deki en güncel ekstreyi bulup portföyü günceller">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6.5h18l-7 8v5l-4 1.5v-6.5z"/></svg>
+        Portföyü güncelle
+      </button>
+      <button id="editBtn" class="btn ghost">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17v3z"/><path d="M14.5 7.5 16.5 9.5"/></svg>
+        Portföyü düzenle
+      </button>
+      <button id="refreshBtn" class="btn">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 4v4.5h-4.5"/></svg>
+        Yenile
+      </button>
+    </div>
+  </header>
+
+  <main id="app">
+    <!-- Yüklenirken: dönen daire değil, gelecek düzenin iskeleti -->
+    <div id="loading" class="loading" aria-live="polite" aria-busy="true">
+      <span class="sr-only">Piyasa verileri çekiliyor</span>
+      <div class="sk-kpis">
+        <div class="sk sk-kpi sk-kpi-lead"></div>
+        <div class="sk sk-kpi"></div>
+        <div class="sk sk-kpi"></div>
+      </div>
+      <div class="sk-grid">
+        <div class="sk sk-panel sk-panel-sm"></div>
+        <div class="sk sk-panel"></div>
+      </div>
+      <div class="sk sk-panel sk-panel-wide"></div>
+    </div>
+
+    <div id="content" class="hidden">
+
+      <!-- Ekstre güncelleme sonucu -->
+      <div id="syncBanner" class="sync-banner hidden"></div>
+
+      <!-- KPI: birincil metrik bilerek daha ağır -->
+      <section class="kpi-row" aria-label="Özet">
+        <article class="kpi kpi-lead">
+          <span class="kpi-label">Toplam değer</span>
+          <span class="kpi-value" id="kpiTotal">—</span>
+        </article>
+        <article class="kpi">
+          <span class="kpi-label">Bugün</span>
+          <span class="kpi-value" id="kpiDaily">—</span>
+        </article>
+        <article class="kpi">
+          <span class="kpi-label">Toplam kâr / zarar</span>
+          <span class="kpi-value" id="kpiPnl">—</span>
+        </article>
+      </section>
+
+      <!-- Uyarılar (yalnızca gerektiğinde görünür) -->
+      <div id="alerts" class="alerts hidden"></div>
+
+      <div class="grid">
+        <div class="col">
+          <section class="card">
+            <div class="card-head"><h2>Varlık dağılımı</h2></div>
+            <div class="alloc">
+              <svg id="donut" viewBox="0 0 200 200" width="188" height="188" role="img"
+                   aria-label="Varlık dağılımı halka grafiği"></svg>
+              <div id="legend" class="legend"></div>
+            </div>
+          </section>
+
+          <section class="card">
+            <div class="card-head"><h2>Piyasa zemini</h2></div>
+            <div id="market" class="market"></div>
+          </section>
+        </div>
+
+        <div class="col">
+          <section class="card card-assets">
+            <div class="card-head"><h2>Varlıklarım</h2></div>
+            <div id="assets" class="assets"></div>
+          </section>
+        </div>
+      </div>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>Değer geçmişi</h2>
+          <span id="histChange" class="hist-change"></span>
+        </div>
+        <div id="history"></div>
+      </section>
+
+      <!-- Portföy asistanı (Claude) -->
+      <section class="card" id="aiCard">
+        <div class="card-head">
+          <h2>Portföy asistanı</h2>
+          <span class="ai-note" title="Soru sorduğunda portföy verin Anthropic'e gönderilir. Arka planda hiçbir şey gönderilmez.">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v5"/><path d="M12 7.6h.01"/></svg>
+            veri dışarı gider
+          </span>
+        </div>
+
+        <div id="aiSetup" class="ai-setup hidden">
+          <p>Asistanı kullanmak için bir Anthropic API anahtarı gerekiyor.
+            Anahtar yalnızca bu bilgisayarda saklanır.</p>
+          <div class="ai-setup-row">
+            <input id="aiKey" type="password" placeholder="sk-ant-..." autocomplete="off" />
+            <button id="aiKeySave" class="btn small">Kaydet</button>
+          </div>
+        </div>
+
+        <div id="aiPanel" class="hidden">
+          <div class="ai-quick">
+            <button class="ai-chip" data-q="Günün raporunu tek paragrafta, sade Türkçeyle özetle.">Raporu sadeleştir</button>
+            <button class="ai-chip" data-q="Aktif uyarıların ne anlama geldiğini tek tek, düz Türkçeyle açıkla.">Uyarıları yorumla</button>
+            <button class="ai-chip" data-q="Portföyümde yoğunlaşma ve çeşitlendirme açısından ne görüyorsun? Fonların içerik çakışmasını da değerlendir.">Yoğunlaşma analizi</button>
+            <button class="ai-chip" data-q="Bugün portföyüm neden bu kadar değişti? Hangi varlık ne kadar etkiledi?">Bugün ne oldu?</button>
+            <button class="ai-chip" data-q="Tuttuğum varlıkları tek tek tanıt: hangi şirket/fon ne iş yapıyor, neye maruz kalıyorum?">Varlıklarımı tanıt</button>
+          </div>
+          <div id="aiLog" class="ai-log"></div>
+          <form id="aiForm" class="ai-form">
+            <input id="aiInput" type="text" autocomplete="off"
+              placeholder="Portföyün hakkında bir şey sor…" />
+            <button id="aiSend" class="btn" type="submit">Sor</button>
+          </form>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="card-head">
+          <h2>Günün raporu</h2>
+          <a id="downloadReport" class="btn ghost small" href="/api/report.txt" download="rapor.txt">
+            <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11"/><path d="M8 11.5 12 15.5 16 11.5"/><path d="M5 19h14"/></svg>
+            İndir
+          </a>
+        </div>
+        <div id="report" class="report"></div>
+      </section>
+
+      <p class="disclaimer">
+        Halka açık verilerle çalışır; hiçbir hesaba veya şifreye bağlanmaz, emir vermez.
+        Üretilen yorumlar yatırım tavsiyesi değildir.
+      </p>
+    </div>
+  </main>
+
+  <!-- Portföy düzenleme penceresi -->
+  <div id="editModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+    <div class="modal-box">
+      <div class="modal-head">
+        <h2 id="editTitle">Portföyü düzenle</h2>
+        <button id="editClose" class="modal-x" aria-label="Kapat">
+          <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 18 18"/><path d="M18 6 6 18"/></svg>
+        </button>
+      </div>
+      <p class="modal-hint">
+        <b>Hisse eklemek:</b> "+ Varlık ekle" → kod kutusuna kodu ya da şirket adını yaz
+        (örn. <i>katılım</i>), çıkan listeden seç. 651 BIST hissesi aranabilir.<br>
+        <b>Alım girmek:</b> satırdaki <b>+ Alış</b> → lot <i>veya</i> toplam ₺ yaz (biri
+        diğerini hesaplar). "Nakitten düş" işaretliyse tutar nakit satırından otomatik
+        düşülür, böylece aynı para iki kez sayılmaz.<br>
+        <b>Fon</b> için TEFAS kodunu yaz (örn. AFA, IPB). <b>Nakit</b> türünde
+        "Adet / Lot" sütununa TL tutarını yaz; maliyet tutara eşitlenir.
+      </p>
+      <!-- Ekstre ile mutabakat -->
+      <section class="sync">
+        <div class="sync-head">
+          <h3>Ekstre ile güncelle</h3>
+          <div class="sync-actions">
+            <button id="syncMail" class="btn small">E-postadan çek</button>
+            <label class="btn ghost small" for="syncFile">Dosya seç</label>
+            <input id="syncFile" type="file" accept="application/pdf" hidden />
+            <button id="syncCfgBtn" class="btn ghost small" title="E-posta ayarları">Ayarlar</button>
+          </div>
+        </div>
+        <p class="sync-hint">Midas'tan ekstreni e-postana gönder, sonra "E-postadan çek"e bas.
+          Uygulama en yeni ekstreyi bulur, farkı çıkarır ve <b>sen onaylayana kadar
+          hiçbir şeyi değiştirmez.</b></p>
+
+        <div class="sync-auto">
+          <label class="sync-toggle">
+            <input id="autoSync" type="checkbox">
+            <span>Otomatik: 8 saatte bir kontrol et, yeni ekstre varsa güncelle</span>
+          </label>
+          <span id="autoInfo" class="sync-note"></span>
+          <button id="syncUndo" class="btn ghost small">Son güncellemeyi geri al</button>
+        </div>
+        <p class="sync-note">Otomatikte <b>pozisyon kapatma</b> uygulanmaz, onayına bırakılır —
+          bayat bir ekstre elindeki varlığı yanlışlıkla silmesin diye. Her güncelleme
+          öncesi yedek alınır.</p>
+
+        <div id="syncCfg" class="sync-cfg hidden">
+          <label>E-posta <input id="cfgEmail" type="email" placeholder="ornek@gmail.com" autocomplete="off"></label>
+          <label>Uygulama şifresi <input id="cfgPass" type="password" placeholder="16 haneli" autocomplete="off"></label>
+          <label>Gönderici filtresi <input id="cfgSender" type="text" placeholder="midas"></label>
+          <button id="cfgSave" class="btn small">Kaydet</button>
+          <p class="sync-note">Gmail'de normal şifren çalışmaz: iki adımlı doğrulama açıkken
+            <b>Uygulama Şifresi</b> üret. Şifre yalnızca bu bilgisayarda saklanır; bağlantı
+            salt-okunurdur, postaların okundu olarak işaretlenmez.</p>
+        </div>
+
+        <div id="syncResult" class="sync-result hidden"></div>
+      </section>
+
+      <div class="edit-table-wrap">
+        <table class="edit-table">
+          <thead><tr>
+            <th>Tür</th><th>Kod</th><th>İsim</th><th>Adet / Lot</th><th>Maliyet (₺)</th><th></th>
+          </tr></thead>
+          <tbody id="editRows"></tbody>
+        </table>
+      </div>
+      <button id="addRow" class="btn ghost small">+ Varlık ekle</button>
+      <div id="editError" class="edit-error hidden" role="alert"></div>
+      <div class="modal-foot">
+        <button id="editCancel" class="btn ghost">İptal</button>
+        <button id="editSave" class="btn">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+# ───────────────────────────────────────────────────────────────
+#  SIRLAR — asla paylaşılmamalı
+# ───────────────────────────────────────────────────────────────
+# Anthropic API anahtarı + Gmail uygulama şifresi + IMAP ayarları
+data/secrets.json
+*.env
+.env*
+
+# ───────────────────────────────────────────────────────────────
+#  KİŞİSEL FİNANSAL VERİ
+# ───────────────────────────────────────────────────────────────
+data/portfolio.json
+data/portfolio.backup.json
+data/history.json
+data/cache.json
+data/reports/
+
+# Midas hesap ekstreleri (TCKN, adres, IBAN, işlem geçmişi içerir)
+*.pdf
+Midas-*
+
+# Kişisel çalışma notları (gerçek pozisyon ve tutarlar)
+PROJECT.md
+
+# ───────────────────────────────────────────────────────────────
+#  TÜRETİLMİŞ / YEREL
+# ───────────────────────────────────────────────────────────────
+data/bist_symbols.json
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.DS_Store
+Thumbs.db
